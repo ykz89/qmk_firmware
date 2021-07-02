@@ -187,7 +187,7 @@ void oled_task_user(void) {
 #endif // OLED_DRIVER_ENABLE
 
 #ifdef ENCODER_ENABLE
-void encoder_update_user(uint8_t index, bool clockwise) {
+bool encoder_update_user(uint8_t index, bool clockwise) {
 
     if (index == 0) { // Left
         switch (biton32(layer_state)) {
@@ -245,5 +245,6 @@ void encoder_update_user(uint8_t index, bool clockwise) {
                 break;
         }
     }
+    return true;
 }
 #endif
