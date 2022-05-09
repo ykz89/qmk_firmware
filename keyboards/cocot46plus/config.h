@@ -39,9 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEBOUNCE 5
 
 /* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
+#undef LOCKING_SUPPORT_ENABLE
 /* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
+#undef LOCKING_RESYNC_ENABLE
+
+/* Limit the maximum layer number to 8 */
+#define LAYER_STATE_8BIT
 
 /* Rotary encoder */
 #define ENCODERS_PAD_A { F7 }
@@ -56,13 +59,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
     #undef RGBLED_NUM
-    // #define RGBLIGHT_ANIMATIONS
+    #define RGBLIGHT_ANIMATIONS
+    /* select individual effect 
     #define RGBLIGHT_EFFECT_BREATHING
     #define RGBLIGHT_EFFECT_RAINBOW_MOOD
     #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-    // #define RGBLIGHT_EFFECT_SNAKE
+    #define RGBLIGHT_EFFECT_SNAKE
     #define RGBLIGHT_EFFECT_STATIC_GRADIENT
     #define RGBLIGHT_EFFECT_TWINKLE
+    */
 
     #define RGBLED_NUM 13
     #define RGBLIGHT_LIMIT_VAL 120
