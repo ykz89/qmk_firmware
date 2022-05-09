@@ -152,6 +152,19 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     
     if (!process_record_user(keycode, record)) return false;
 
+    switch (keycode) {
+#ifndef MOUSEKEY_ENABLE
+        // process KC_MS_BTN1~8 by myself
+        // See process_action() in quantum/action.c for details.
+        case KC_MS_BTN1 ... KC_MS_BTN8: {
+            extern void register_button(bool, enum mouse_buttons);
+            register_button(record->event.pressed, MOUSE_BTN_MASK(keycode - KC_MS_BTN1));
+            return false;
+#endif
+        }
+
+    }
+
     if (keycode == CPI_SW && record->event.pressed) {
         keyboard_config.cpi_idx = (keyboard_config.cpi_idx + 1) % CPI_OPTION_SIZE;
         eeconfig_update_kb(keyboard_config.raw);
@@ -228,6 +241,7 @@ void oled_write_layer_state(void) {
     int cpi = cpi_array[keyboard_config.cpi_idx];
     int scroll_div = scrl_div_array[keyboard_config.scrl_div];
     int angle = angle_array[keyboard_config.rotation_angle];
+    
     char buf1[5];
     char buf2[2];
     char buf3[4];
@@ -254,10 +268,13 @@ void oled_write_layer_state(void) {
     }
     oled_write_P(PSTR(" / "), false);
     oled_write(buf1, false);
+    //oled_write(get_u8_str(cpi, ' '), false);
     oled_write_P(PSTR(" / "), false);
     oled_write(buf2, false);
+    //oled_write(get_u8_str(scroll_div, ' '), false);
     oled_write_P(PSTR(" /"), false);
     oled_write(buf3, false);
+    //oled_write(get_u8_str(angle, ' '), false);
 }
 
 #endif
