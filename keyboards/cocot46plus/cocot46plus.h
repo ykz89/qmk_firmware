@@ -46,25 +46,30 @@ typedef union {
         uint8_t cpi_idx;
         uint8_t scrl_div;
         uint8_t rotation_angle;
+        int8_t scrl_inv;
+        bool scrl_mode;
     };
-} keyboard_config_t;
+} cocot_config_t;
 
-extern keyboard_config_t keyboard_config;
+extern cocot_config_t cocot_config;
 
 enum cocot_keycodes {
 
     COCOT_SAFE_RANGE = SAFE_RANGE,
     CPI_SW,
     SCRL_SW,
-    ANGL_SW,
+    ROT_R15,
+    ROT_L15,
     SCRL_MO,
     SCRL_TO,
+    SCRL_IN,
 
 };
 
 bool encoder_update_user(uint8_t index, bool clockwise);
 bool encoder_update_kb(uint8_t index, bool clockwise);
-
+bool cocot_get_scroll_mode(void);
+void cocot_set_scroll_mode(bool mode);
 
 void render_logo(void);
 void oled_write_layer_state(void);

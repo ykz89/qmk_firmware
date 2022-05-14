@@ -19,12 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include "quantum.h"
 
-#define COCOT_DRAGSCROLL_INVERT
-
-// used for tracking the state
-// bool is_drag_scroll = false;
-
-// bool isScrollMode = false;
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_number {
@@ -37,7 +31,7 @@ enum layer_number {
 
 #define LW_MHEN LT(1,KC_MHEN)  // lower
 #define RS_HENK LT(2,KC_HENK)  // raise
-#define DEL_ALT ALT_T(KC_DEL)  // raise
+#define DEL_ALT ALT_T(KC_DEL)
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -49,8 +43,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
       KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                                                      KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH, KC_MINS,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-                        KC_LGUI, DEL_ALT,   LW_MHEN,  KC_SPC,    KC_PGUP,KC_MS_BTN1, KC_MS_BTN2, KC_PGDOWN,   KC_ENT,   RS_HENK, KC_BSPC,  KC_ESC,
-                                                                 KC_PGUP, KC_PGDOWN,    KC_PGUP, KC_PGDOWN
+                        KC_LGUI, DEL_ALT,   LW_MHEN,  KC_SPC, KC_MS_BTN3,KC_MS_BTN1, KC_MS_BTN2, XXXXXXX,      KC_ENT,   RS_HENK, KC_BSPC,  KC_ESC,
+                                                                 KC_PGUP, KC_PGDOWN,    XXXXXXX, XXXXXXX
                                                             //`-----------------------'  `-----------------------'
     ),
   [_LOWER] = LAYOUT(
@@ -61,8 +55,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
       KC_LSFT,  KC_GRV, KC_TILD, KC_NUBS, KC_PIPE, XXXXXXX,                                                    KC_EQL, KC_PLUS, KC_LABK, KC_RABK, KC_QUES, KC_UNDS,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-                        KC_LGUI, DEL_ALT, KC_TRNS,  KC_SPC,   KC_MS_BTN3,KC_MS_BTN4, KC_MS_BTN5, KC_MS_BTN3,   KC_ENT,   TT(3), KC_BSPC,  KC_ESC,
-                                                                 KC_PGUP, KC_PGDOWN,    KC_PGUP, KC_PGDOWN
+                        KC_LGUI, DEL_ALT, KC_TRNS,  KC_SPC,   KC_MS_BTN3,KC_MS_BTN4, KC_MS_BTN5, XXXXXXX,      KC_ENT,   TT(3), KC_BSPC,  KC_ESC,
+                                                                 KC_PGUP, KC_PGDOWN,    XXXXXXX, XXXXXXX
                                                             //`-----------------------'  `-----------------------'
     ),
   [_RAISE] = LAYOUT(
@@ -73,20 +67,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
       KC_LSFT,   KC_F6,   KC_F7,   KC_F8,   KC_F9,  KC_F10,                                                   KC_LEFT, KC_DOWN, KC_RGHT,  KC_DOT, KC_SLSH, KC_MINS,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-                        KC_LGUI, DEL_ALT,   TT(3),  KC_SPC,   KC_MS_BTN3,KC_MS_BTN4, KC_MS_BTN5, KC_MS_BTN3,   KC_ENT, KC_TRNS, KC_BSPC,  KC_ESC,
-                                                                 KC_PGUP, KC_PGDOWN,    KC_PGUP, KC_PGDOWN
+                        KC_LGUI, DEL_ALT,   TT(3),  KC_SPC,   KC_MS_BTN3,KC_MS_BTN4, KC_MS_BTN5, XXXXXXX,      KC_ENT, KC_TRNS, KC_BSPC,  KC_ESC,
+                                                                 KC_PGUP, KC_PGDOWN,    XXXXXXX, XXXXXXX
                                                             //`-----------------------'  `-----------------------'
     ),
   [_TRACKBALL] = LAYOUT(
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_TOG,                                                   SCRL_TO,  CPI_SW, SCRL_SW, ANGL_SW, XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RGB_TOG,                                                   SCRL_TO,  CPI_SW, SCRL_SW, ROT_L15, ROT_R15, XXXXXXX,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
       XXXXXXX, XXXXXXX, RGB_VAI, RGB_SAI, RGB_HUI, RGB_MOD,                                                   SCRL_MO, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-      XXXXXXX, XXXXXXX, RGB_VAD, RGB_SAD, RGB_HUD,RGB_RMOD,                                                   XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      XXXXXXX, XXXXXXX, RGB_VAD, RGB_SAD, RGB_HUD,RGB_RMOD,                                                   SCRL_IN, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|-------------------------------------------------------|                                               |-------------------------------------------------------|
-                        KC_LGUI, DEL_ALT, KC_TRNS,  KC_SPC,      KC_TRNS,KC_MS_BTN1, KC_MS_BTN2,    KC_TRNS, KC_MS_BTN1, KC_TRNS, KC_MS_BTN2,  KC_ESC,
-                                                                 KC_PGUP, KC_PGDOWN,    KC_PGUP, KC_PGDOWN
+                        KC_LGUI, DEL_ALT, KC_TRNS,  KC_SPC,      KC_TRNS,KC_MS_BTN1, KC_MS_BTN2, XXXXXXX,  KC_MS_BTN1, KC_TRNS, KC_MS_BTN2,  KC_ESC,
+                                                                 KC_PGUP, KC_PGDOWN,    XXXXXXX, XXXXXXX
                                                             //`-----------------------'  `-----------------------'
     )
 };
@@ -160,19 +154,24 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 */
 
+
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
     case _LOWER:
         rgblight_sethsv_range(HSV_BLUE, 0, 3);
+        cocot_set_scroll_mode(true);
         break;
     case _RAISE:
         rgblight_sethsv_range(HSV_RED, 0, 3);
+        cocot_set_scroll_mode(true);
         break;
     case _TRACKBALL:
         rgblight_sethsv_range(HSV_GREEN, 0, 3);
+        cocot_set_scroll_mode(false);
         break;
     default:
         rgblight_sethsv_range( 0, 0, 0, 0, 3);
+        cocot_set_scroll_mode(false);
         break;
     }
     rgblight_set_effect_range( 3, 10);
@@ -181,7 +180,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 
 #ifdef OLED_ENABLE
-// #include "cocot46plus.h"
 bool oled_task_user(void) {
     render_logo();
     oled_write_layer_state();
