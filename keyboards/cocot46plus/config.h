@@ -20,8 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config_common.h"
 
 /* USB Device descriptor parameter */
-#define VENDOR_ID    0xFEED
-#define PRODUCT_ID   0x0000
+#define VENDOR_ID    0x1727
+#define PRODUCT_ID   0x0003
 #define DEVICE_VER   0x0001
 #define MANUFACTURER aki27
 #define PRODUCT      cocot46plus
@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_COLS 6
 
 // wiring of each half
-#define MATRIX_ROW_PINS { D3, D2, B3, B2, D1 }
-#define MATRIX_COL_PINS { D4, C6, D7, F4, F5, F6 }
+#define MATRIX_ROW_PINS { D4, C6, D7, E6, D1 }
+#define MATRIX_COL_PINS { F4, F5, F6, F7, B1, B3 }
 #define UNUSED_PINS
 
 /* Set 0 if debouncing isn't needed */
@@ -47,8 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LAYER_STATE_8BIT
 
 /* Rotary encoder */
-#define ENCODERS_PAD_A { F7 }
-#define ENCODERS_PAD_B { B1 }
+#define ENCODERS_PAD_A { D3 }
+#define ENCODERS_PAD_B { D2 }
 #define ENCODER_RESOLUTION 4
 
 #define TAPPING_FORCE_HOLD
@@ -69,14 +69,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     #define RGBLIGHT_EFFECT_TWINKLE
     */
 
-    #define RGBLED_NUM 13
+    #define RGBLED_NUM 12
     #define RGBLIGHT_LIMIT_VAL 120
     #define RGBLIGHT_HUE_STEP 10
     #define RGBLIGHT_SAT_STEP 17
     #define RGBLIGHT_VAL_STEP 17
 #endif
 
-#define ADNS5050_SCLK_PIN         E6
+#define ADNS5050_SCLK_PIN         B2
 #define ADNS5050_SDIO_PIN         B4
 #define ADNS5050_CS_PIN           B5
 
