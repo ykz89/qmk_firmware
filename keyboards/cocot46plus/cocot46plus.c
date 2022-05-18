@@ -111,7 +111,7 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
 
 
-bool process_record_kb(uint16_t keycode, bkeyrecord_t* record) {
+bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     // xprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
     
     if (!process_record_user(keycode, record)) return false;
@@ -219,7 +219,7 @@ void render_logo(void) {
 
 void oled_write_layer_state(void) {
 
-    // oled_write_P(PSTR("L:"), false);
+    oled_write_P(PSTR(" "), false);
     // int cpi = pointing_device_get_cpi();
     int cpi = cpi_array[cocot_config.cpi_idx];
     int scroll_div = scrl_div_array[cocot_config.scrl_div];
