@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #ifndef COCOT_SCROLL_DIVIDERS
-#    define COCOT_SCROLL_DIVIDERS { 1, 2, 4, 8 }
+#    define COCOT_SCROLL_DIVIDERS { 1, 2, 4, 8, 64 }
 #    ifndef COCOT_SCROLL_DIV_DEFAULT
 #       define COCOT_SCROLL_DIV_DEFAULT 3
 #    endif
@@ -74,6 +74,10 @@ uint16_t angle_array[] = COCOT_ROTATION_ANGLE;
 bool     BurstState        = false;  // init burst state for Trackball module
 uint16_t MotionStart       = 0;      // Timer for accel, 0 is resting state
 
+// Scroll Accumulation
+static int8_t h_acm        = 0;
+static int8_t v_acm        = 0;
+
 
 void pointing_device_init_kb(void) {
     // set the CPI.
@@ -89,13 +93,23 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
 
     if (cocot_get_scroll_mode()) {
-        x_rev = x_rev / scrl_div_array[cocot_config.scrl_div] * cocot_config.scrl_inv;
-        y_rev = -y_rev / scrl_div_array[cocot_config.scrl_div] * cocot_config.scrl_inv;
-        x_rev = convert_twoscomp(x_rev);
-        y_rev = convert_twoscomp(y_rev);
+        // accumulate scroll
+        h_acm += convert_twoscomp(x_rev) * cocot_config.scrl_inv;
+        v_acm += convert_twoscomp(y_rev) * cocot_config.scrl_inv * -1;
 
-        mouse_report.h = x_rev;
-        mouse_report.v = y_rev;
+        int8_t h_rev = h_acm / scrl_div_array[cocot_config.scrl_div];
+        int8_t v_rev = v_acm / scrl_div_array[cocot_config.scrl_div];
+
+        // clear accumulated scroll on assignment
+
+        if (h_rev != 0) {
+            mouse_report.h = h_rev;
+            h_acm = 0;
+        }
+        if (v_rev != 0) {
+            mouse_report.v = v_rev;
+            v_acm = 0;
+        }
 
         mouse_report.x = 0;
         mouse_report.y = 0;
@@ -229,7 +243,7 @@ void oled_write_layer_state(void) {
     char buf2[2];
     char buf3[4];
     snprintf(buf1, 5, "%4d", cpi);
-    snprintf(buf2, 2, "%1d", scroll_div);
+    snprintf(buf2, 3, "%2d", scroll_div);
     snprintf(buf3, 4, "%3d", angle);
 
     switch (get_highest_layer(layer_state | default_layer_state)) {
