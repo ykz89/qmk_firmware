@@ -103,10 +103,20 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         // clear accumulated scroll on assignment
 
         if (h_rev != 0) {
+            if (mouse_report.h + h_rev > 127) {
+                h_rev = 127 - mouse_report.h;
+            } else if (mouse_report.h + h_rev < -127) {
+                h_rev = -127 - mouse_report.h;
+            }
             mouse_report.h += h_rev;
             h_acm -= h_rev * scrl_div_array[cocot_config.scrl_div];
         }
         if (v_rev != 0) {
+            if (mouse_report.v + v_rev > 127) {
+                v_rev = 127 - mouse_report.v;
+            } else if (mouse_report.v + v_rev < -127) {
+                v_rev = -127 - mouse_report.v;
+            }
             mouse_report.v += v_rev;
             v_acm -= v_rev * scrl_div_array[cocot_config.scrl_div];
         }
