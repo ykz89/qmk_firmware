@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 
 #ifndef COCOT_SCROLL_DIVIDERS
-#    define COCOT_SCROLL_DIVIDERS { 1, 2, 4, 8, 64 }
+#    define COCOT_SCROLL_DIVIDERS { 1, 2, 4, 8, 30, 60 }
 #    ifndef COCOT_SCROLL_DIV_DEFAULT
 #       define COCOT_SCROLL_DIV_DEFAULT 3
 #    endif
@@ -75,8 +75,8 @@ bool     BurstState        = false;  // init burst state for Trackball module
 uint16_t MotionStart       = 0;      // Timer for accel, 0 is resting state
 
 // Scroll Accumulation
-static int8_t h_acm        = 0;
-static int8_t v_acm        = 0;
+static int16_t h_acm       = 0;
+static int16_t v_acm       = 0;
 
 
 void pointing_device_init_kb(void) {
@@ -87,15 +87,15 @@ void pointing_device_init_kb(void) {
 
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
 
-    double rad = angle_array[cocot_config.rotation_angle] * (M_PI / 180);
-    uint16_t x_rev =  + mouse_report.x * cos(rad) + mouse_report.y * sin(rad);
-    uint16_t y_rev =  - mouse_report.x * sin(rad) + mouse_report.y * cos(rad);
+    double rad = angle_array[cocot_config.rotation_angle] * (M_PI / 180) * -1;
+    int8_t x_rev =  + mouse_report.x * cos(rad) - mouse_report.y * sin(rad);
+    int8_t y_rev =  + mouse_report.x * sin(rad) + mouse_report.y * cos(rad);
 
 
     if (cocot_get_scroll_mode()) {
         // accumulate scroll
-        h_acm += convert_twoscomp(x_rev) * cocot_config.scrl_inv;
-        v_acm += convert_twoscomp(y_rev) * cocot_config.scrl_inv * -1;
+        h_acm += x_rev * cocot_config.scrl_inv;
+        v_acm += y_rev * cocot_config.scrl_inv * -1;
 
         int8_t h_rev = h_acm / scrl_div_array[cocot_config.scrl_div];
         int8_t v_rev = v_acm / scrl_div_array[cocot_config.scrl_div];
@@ -103,19 +103,17 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         // clear accumulated scroll on assignment
 
         if (h_rev != 0) {
-            mouse_report.h = h_rev;
-            h_acm = 0;
+            mouse_report.h += h_rev;
+            h_acm -= h_rev * scrl_div_array[cocot_config.scrl_div];
         }
         if (v_rev != 0) {
-            mouse_report.v = v_rev;
-            v_acm = 0;
+            mouse_report.v += v_rev;
+            v_acm -= v_rev * scrl_div_array[cocot_config.scrl_div];
         }
 
         mouse_report.x = 0;
         mouse_report.y = 0;
     } else {
-        x_rev = convert_twoscomp(x_rev);
-        y_rev = convert_twoscomp(y_rev);
         mouse_report.x = x_rev;
         mouse_report.y = y_rev;
     }
@@ -240,7 +238,7 @@ void oled_write_layer_state(void) {
     int angle = angle_array[cocot_config.rotation_angle];
     
     char buf1[5];
-    char buf2[2];
+    char buf2[3];
     char buf3[4];
     snprintf(buf1, 5, "%4d", cpi);
     snprintf(buf2, 3, "%2d", scroll_div);
