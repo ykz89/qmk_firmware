@@ -105,9 +105,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef OLED_ENABLE
 
 oled_rotation_t oled_init_user(oled_rotation_t rotation) {
-  if (!is_keyboard_master())
-    return OLED_ROTATION_180;  // flips the display 180 degrees if offhand
-  return rotation;
+  return OLED_ROTATION_180;
 }
 
 // When you add source files to SRC in rules.mk, you can use functions.
@@ -147,3 +145,50 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
   return true;
 }
+
+#ifdef ENCODER_ENABLE
+bool encoder_update_user(uint8_t index, bool clockwise) {
+
+    if (index == 0) { // Left
+        switch (biton32(layer_state)) {
+            case _QWERTY:
+                // Move whole words. Hold shift to select while moving.
+                if (clockwise) {
+                    tap_code16(C(KC_RGHT));
+                } else {
+                    tap_code16(C(KC_LEFT));
+                }
+                break;
+            default:
+                // History scrubbing. For Adobe products, hold shift while moving
+                // backward to go forward instead.
+                if (clockwise) {
+                    tap_code16(C(KC_Z));
+                } else {
+                    tap_code16(C(KC_Y));
+                }
+                break;
+        }
+    } else if (index == 1) { // Right
+        switch (biton32(layer_state)) {
+            case _QWERTY:
+                // Scrolling with PageUp and PgDn.
+                if (clockwise) {
+                    tap_code(KC_PGDN);
+                } else {
+                    tap_code(KC_PGUP);
+                }
+                break;
+            default:
+                // Scroll through tabs
+                if (clockwise) {
+                    tap_code16(C(KC_TAB));
+                } else {
+                    tap_code16(S(C(KC_TAB)));
+                }
+                break;
+        }
+    }
+    return true;
+}
+#endif
