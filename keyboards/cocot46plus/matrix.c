@@ -170,6 +170,13 @@ bool matrix_scan_custom(matrix_row_t current_matrix[])
   for (uint8_t current_col = 0; current_col < MATRIX_COLS; current_col++) {
     changed |= read_rows_on_col(current_matrix, current_col);
   }
-  
+
+  /**
+    * on AVR the I2C controller just hijacks the pins whenever it is activated
+    * on RP2040 you are supposed to set the appropriate alternate function for the used pins,
+    * and that selection gets overwritten when the matrix code reconfigures the pins as plain GPIOs.
+    */
+  palSetLineMode(I2C1_SDA_PIN, PAL_MODE_ALTERNATE(I2C1_SDA_PAL_MODE) | PAL_RP_PAD_DRIVE4);
+
   return (uint8_t)changed;
 }

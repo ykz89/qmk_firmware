@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // wiring of each half
 #define MATRIX_ROW_PINS { D4, C6, D7, E6, D1 }
 #define MATRIX_COL_PINS { F4, F5, F6, F7, B1, B3 }
-#define UNUSED_PINS
 
 /* Set 0 if debouncing isn't needed */
 #define DEBOUNCE 5
@@ -45,6 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Limit the maximum layer number to 8 */
 #define LAYER_STATE_8BIT
+
+#define FORCE_NKRO
 
 /* Rotary encoder */
 #define ENCODERS_PAD_A { D3 }
@@ -59,15 +60,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
     #undef RGBLED_NUM
-    #define RGBLIGHT_ANIMATIONS
-    /* select individual effect 
+    #define RGBLIGHT_EFFECT_ALTERNATING
     #define RGBLIGHT_EFFECT_BREATHING
+    #define RGBLIGHT_EFFECT_CHRISTMAS
+    #define RGBLIGHT_EFFECT_KNIGHT
     #define RGBLIGHT_EFFECT_RAINBOW_MOOD
     #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
+    #define RGBLIGHT_EFFECT_RGB_TEST
     #define RGBLIGHT_EFFECT_SNAKE
     #define RGBLIGHT_EFFECT_STATIC_GRADIENT
     #define RGBLIGHT_EFFECT_TWINKLE
-    */
 
     #define RGBLED_NUM 12
     #define RGBLIGHT_LIMIT_VAL 120
