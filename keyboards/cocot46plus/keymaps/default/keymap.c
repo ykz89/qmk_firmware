@@ -85,49 +85,50 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     )
 };
 
-keyevent_t encoder1_ccw = {
-    .key = (keypos_t){.row = 4, .col = 2},
-    .pressed = false
-};
+#ifdef ENCODER_ENABLE
+    keyevent_t encoder1_ccw = {
+        .key = (keypos_t){.row = 4, .col = 2},
+        .pressed = false
+    };
 
-keyevent_t encoder1_cw = {
-    .key = (keypos_t){.row = 4, .col = 5},
-    .pressed = false
-};
+    keyevent_t encoder1_cw = {
+        .key = (keypos_t){.row = 4, .col = 5},
+        .pressed = false
+    };
 
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    if (index == 0) { /* First encoder */
-        if (clockwise) {
-            encoder1_cw.pressed = true;
-            encoder1_cw.time = (timer_read() | 1);
-            action_exec(encoder1_cw);
-        } else {
-            encoder1_ccw.pressed = true;
+    bool encoder_update_user(uint8_t index, bool clockwise) {
+        if (index == 0) { /* First encoder */
+            if (clockwise) {
+                encoder1_cw.pressed = true;
+                encoder1_cw.time = (timer_read() | 1);
+                action_exec(encoder1_cw);
+            } else {
+                encoder1_ccw.pressed = true;
+                encoder1_ccw.time = (timer_read() | 1);
+                action_exec(encoder1_ccw);
+            }
+        }
+
+        return true;
+    }
+
+
+    void matrix_scan_user(void) {
+
+        if (IS_PRESSED(encoder1_ccw)) {
+            encoder1_ccw.pressed = false;
             encoder1_ccw.time = (timer_read() | 1);
             action_exec(encoder1_ccw);
         }
+
+        if (IS_PRESSED(encoder1_cw)) {
+            encoder1_cw.pressed = false;
+            encoder1_cw.time = (timer_read() | 1);
+            action_exec(encoder1_cw);
+        }
+
     }
-
-    return true;
-}
-
-
-void matrix_scan_user(void) {
-
-    if (IS_PRESSED(encoder1_ccw)) {
-        encoder1_ccw.pressed = false;
-        encoder1_ccw.time = (timer_read() | 1);
-        action_exec(encoder1_ccw);
-    }
-
-    if (IS_PRESSED(encoder1_cw)) {
-        encoder1_cw.pressed = false;
-        encoder1_cw.time = (timer_read() | 1);
-        action_exec(encoder1_cw);
-    }
-
-}
-
+#endif
 
 /*
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
