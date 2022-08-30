@@ -1,5 +1,8 @@
 /*
 Copyright 2022 aki27
+Copyright 2021 Quentin LEBASTARD <qlebastard@gmail.com>
+Copyright 2021 Charly Delay <charly@codesink.dev> (@0xcharly)
+Copyright 2022 Ying Kun Zhan <yingkun@zhan.co.nl> (@yingkun)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -35,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     { B00,   B01,   B02,   B03,   B04,   B05 }, \
     { B10,   B11,   B12,   B13,   B14,   B15 }, \
     { B20,   B21,   B22,   B23,   B24,   B25 }, \
-    { B30,   B31,   B32,   B33,   B34,   B35 },  \
+    { B30,   B31,   B32,   B33,   B34,   B35 }, \
     { KC_NO, KC_NO, B42, KC_NO, KC_NO,   B45 }  \
   }
 
@@ -54,17 +57,29 @@ typedef union {
 extern cocot_config_t cocot_config;
 
 enum cocot_keycodes {
-
-    COCOT_SAFE_RANGE = SAFE_RANGE,
-    CPI_SW,
-    SCRL_SW,
-    ROT_R15,
-    ROT_L15,
-    SCRL_MO,
-    SCRL_TO,
-    SCRL_IN,
-
+    POINTER_DEFAULT_DPI_FORWARD = SAFE_RANGE,
+    POINTER_DEFAULT_DPI_REVERSE,
+    POINTER_SNIPING_DPI_FORWARD,
+    POINTER_SNIPING_DPI_REVERSE,
+    SNIPING_MODE,
+    SNIPING_MODE_TOGGLE,
+    DRAGSCROLL_MODE,
+    DRAGSCROLL_MODE_TOGGLE,
+    POINTER_DEFAULT_ANGLE_FORWARD,
+    POINTER_DEFAULT_ANGLE_REVERSE,
+    CHARYBDIS_SAFE_RANGE,
 };
+
+#        define DPI_MOD POINTER_DEFAULT_DPI_FORWARD
+#        define DPI_RMOD POINTER_DEFAULT_DPI_REVERSE
+#        define S_D_MOD POINTER_SNIPING_DPI_FORWARD
+#        define S_D_RMOD POINTER_SNIPING_DPI_REVERSE
+#        define SNIPING SNIPING_MODE
+#        define SNP_TOG SNIPING_MODE_TOGGLE
+#        define DRGSCRL DRAGSCROLL_MODE
+#        define DRG_TOG DRAGSCROLL_MODE_TOGGLE
+#        define ROT_MOD POINTER_DEFAULT_ANGLE_FORWARD
+#        define ROT_RMOD POINTER_DEFAULT_ANGLE_REVERSE
 
 bool encoder_update_user(uint8_t index, bool clockwise);
 bool encoder_update_kb(uint8_t index, bool clockwise);
@@ -73,3 +88,70 @@ void cocot_set_scroll_mode(bool mode);
 
 void render_logo(void);
 void oled_write_layer_state(void);
+
+
+/** \brief Return the current DPI value for the pointer's default mode. */
+uint16_t charybdis_get_pointer_default_dpi(void);
+
+/**
+ * \brief Update the pointer's default DPI to the next or previous step.
+ *
+ * Increases the DPI value if `forward` is `true`, decreases it otherwise.
+ * The increment/decrement steps are equal to CHARYBDIS_DEFAULT_DPI_CONFIG_STEP.
+ *
+ * The new value is persisted in EEPROM.
+ */
+void charybdis_cycle_pointer_default_dpi(bool forward);
+
+/**
+ * \brief Same as `charybdis_cycle_pointer_default_dpi`, but do not write to
+ * EEPROM.
+ *
+ * This means that reseting the board will revert the value to the last
+ * persisted one.
+ */
+void charybdis_cycle_pointer_default_dpi_noeeprom(bool forward);
+
+/** \brief Return the current DPI value for the pointer's sniper-mode. */
+uint16_t charybdis_get_pointer_sniping_dpi(void);
+
+/**
+ * \brief Update the pointer's sniper-mode DPI to the next or previous step.
+ *
+ * Increases the DPI value if `forward` is `true`, decreases it otherwise.
+ * The increment/decrement steps are equal to CHARYBDIS_SNIPING_DPI_CONFIG_STEP.
+ *
+ * The new value is persisted in EEPROM.
+ */
+void charybdis_cycle_pointer_sniping_dpi(bool forward);
+
+/**
+ * \brief Same as `charybdis_cycle_pointer_sniping_dpi`, but do not write to
+ * EEPROM.
+ *
+ * This means that reseting the board will revert the value to the last
+ * persisted one.
+ */
+void charybdis_cycle_pointer_sniping_dpi_noeeprom(bool forward);
+
+/** \brief Whether sniper-mode is enabled. */
+bool charybdis_get_pointer_sniping_enabled(void);
+
+/**
+ * \brief Enable/disable sniper mode.
+ *
+ * When sniper mode is enabled the dpi is reduced to slow down the pointer for
+ * more accurate movements.
+ */
+void charybdis_set_pointer_sniping_enabled(bool enable);
+
+/** \brief Whether drag-scroll is enabled. */
+bool charybdis_get_pointer_dragscroll_enabled(void);
+
+/**
+ * \brief Enable/disable drag-scroll mode.
+ *
+ * When drag-scroll mode is enabled, horizontal and vertical pointer movements
+ * are translated into horizontal and vertical scroll movements.
+ */
+void charybdis_set_pointer_dragscroll_enabled(bool enable);

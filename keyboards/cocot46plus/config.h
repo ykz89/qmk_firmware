@@ -45,8 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Limit the maximum layer number to 8 */
 #define LAYER_STATE_8BIT
 
-#define FORCE_NKRO
-
 /* Rotary encoder */
 #define ENCODERS_PAD_A { D3 }
 #define ENCODERS_PAD_B { D2 }
@@ -60,16 +58,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef RGBLIGHT_ENABLE
     #undef RGBLED_NUM
-    #define RGBLIGHT_EFFECT_ALTERNATING
+    /* select individual effect
     #define RGBLIGHT_EFFECT_BREATHING
-    #define RGBLIGHT_EFFECT_CHRISTMAS
-    #define RGBLIGHT_EFFECT_KNIGHT
     #define RGBLIGHT_EFFECT_RAINBOW_MOOD
     #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-    #define RGBLIGHT_EFFECT_RGB_TEST
     #define RGBLIGHT_EFFECT_SNAKE
     #define RGBLIGHT_EFFECT_STATIC_GRADIENT
     #define RGBLIGHT_EFFECT_TWINKLE
+    */
 
     #define RGBLED_NUM 12
     #define RGBLIGHT_LIMIT_VAL 120
