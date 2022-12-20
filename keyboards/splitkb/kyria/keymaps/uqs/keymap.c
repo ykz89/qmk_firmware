@@ -3,6 +3,7 @@
 // vi:et sw=4 cc=5,15,25,35,45,55,65:
 
 #include "uqs.h"
+#include "kyria_layout_stack.h"
 
 /*
  * My custom layout macro that allows for easy diff(1) operations between
