@@ -15,6 +15,7 @@
  */
 #include QMK_KEYBOARD_H
 #include "rmw.h"
+#include "kyria_layout_stack.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
