@@ -223,7 +223,7 @@ LAYOUT_charybdis_4x6( \
     KC_LSFT,    L10,    L11,    L12,    L13,    L14,    R15,    R16,    R17,    R18,    R19,    KC_SCLN,    \
     KC_LCTL,    L20,    L21,    L22,    L23,    L24,    R25,    R26,    R27,    R28,    R29,    KC_RSHIFT,  \
                                 L30,    L31,    L32,    R33,    R34,                                        \
-                                        KC_BTN1,KC_BTN2,KC_DEL                                              \
+                                        KC_BTN1,KC_BTN2,KC_DEL                                             \j \
 )
 
 #define LAYOUT_wrapper(...) _LAYOUT_3x5_TO_4x6(__VA_ARGS__)
