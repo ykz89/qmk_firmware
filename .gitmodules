@@ -25,3 +25,7 @@
 	path = lib/lvgl
 	url = https://github.com/qmk/lvgl.git
 	branch = release/v8.2
+[submodule "users/ykz89"]
+    path = users/ykz89
+    url = https://github.com/ykz89/qmk_userspace.git
+    branch = main
