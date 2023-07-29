@@ -1,0 +1,7 @@
+RGBLIGHT_ENABLE = yes
+
+OLED_ENABLE = yes
+
+VIA_ENABLE = yes
+
+CONVERT_TO=splinky
