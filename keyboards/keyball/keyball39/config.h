@@ -22,8 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VENDOR_ID           0x5957      // "YW" = Yowkees
 #define PRODUCT_ID          0x0200
 #define DEVICE_VER          0x0001
-#define MANUFACTURER        Yowkees
-#define PRODUCT             Keyball39
+
 
 // Key matrix parameters
 #define MATRIX_ROWS         (4 * 2)  // split keyboard

@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #undef SPI_DRIVER
 #define SPI_DRIVER SPID0
-#define SPI_MOSI_PIN GP19
+#define SPI_MOSI_PIN B2
+#define SPI_MISO_PIN B3
+#define SPI_SCK_PIN  B1
 
 #ifdef RGBLIGHT_ENABLE
 #    define RGBLIGHT_EFFECT_BREATHING
