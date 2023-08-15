@@ -1,0 +1,24 @@
+{
+    "keyboard_name": "testamatta MacroPad EX001",
+    "url": "https://github.com/hide-key",
+    "maintainer": "hide-key",
+    "layouts": {
+        "LAYOUT": {
+            "layout": [
+                {"label":"00", "x":0, "y":0},
+                {"label":"01", "x":1, "y":0},
+                {"label":"02", "x":3, "y":0},
+                {"label":"03", "x":4, "y":0},
+                {"label":"04", "x":0, "y":1},
+                {"label":"05", "x":1, "y":1},
+                {"label":"06", "x":3, "y":1},
+                {"label":"07", "x":4, "y":1},
+                {"label":"08", "x":0, "y":2},
+                {"label":"lower", "x":1, "y":2},
+                {"label":"Space", "x":2, "y":2},
+                {"label":"raise", "x":3, "y":2},
+                {"label":"09", "x":4, "y":2}
+            ]
+        }
+    }
+}

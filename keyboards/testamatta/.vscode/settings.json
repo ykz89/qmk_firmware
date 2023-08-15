@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "rp2040_zero.h": "c",
+        "blackpill.h": "c"
+    }
+}

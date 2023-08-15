@@ -1,0 +1,11 @@
+MCU = STM32F411
+BOOTLOADER = tinyuf2
+
+SPLIT_KEYBOARD = no
+RGBLIGHT_ENABLE = no
+
+USB_DEVICE_PRODUCT = "testamatta MacroPad EX011 BlackPill"
+USB_DEVICE_MANUFACTURER = "testamatta Design Garage"
+
+VIA_ENABLE = yes
+SLEEP_LED_ENABLE = yes

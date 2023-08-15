@@ -1,0 +1,33 @@
+{
+    "keyboard_name": "testamatta MacroPad EX011 BLACKPILL",
+    "url": "https://github.com/hide-key",
+    "maintainer": "hide-key",
+    "layouts": {
+        "LAYOUT": {
+            "layout": [
+                {"label":"Esc", "x":0, "y":0},
+                {"label":"Restart", "x":1.75, "y":0},
+                {"label":"Mute", "x":2.75, "y":0},
+                {"label":"Tab", "x":0, "y":1.5, "w":1.75},
+                {"label":"Q", "x":1.75, "y":1.5},
+                {"label":"W", "x":2.75, "y":1.5},
+                {"label":"E", "x":3.75, "y":1.5},
+                {"label":"R", "x":4.75, "y":1.5},
+                {"label":"Caps lock", "x":0, "y":2.5, "w":1.75},
+                {"label":"A", "x":1.75, "y":2.5},
+                {"label":"S", "x":2.75, "y":2.5},
+                {"label":"D", "x":3.75, "y":2.5},
+                {"label":"F", "x":4.75, "y":2.5},
+                {"label":"Shift", "x":0, "y":3.5, "w":1.75},
+                {"label":"Z", "x":1.75, "y":3.5},
+                {"label":"X", "x":2.75, "y":3.5},
+                {"label":"C", "x":3.75, "y":3.5},
+                {"label":"V", "x":4.75, "y":3.5},
+                {"label":"Ctrl", "x":0, "y":4.5, "w":1.75},
+                {"label":"Win", "x":1.75, "y":4.5},
+                {"label":"Alt", "x":2.75, "y":4.5},
+                {"label":"Space", "x":3.75, "y":4.5, "w":2}
+            ]
+        }
+    }
+}
