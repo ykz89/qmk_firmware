@@ -1,7 +1,13 @@
 {
     "keyboard_name": "testamatta MacroPad EX100",
-    "url": "https://github.com/hide-key",
+    "manufacturer": "testamatta Design Garage",
     "maintainer": "hide-key",
+    "url": "https://github.com/hide-key",
+    "usb": {
+        "vid": "0x1D8C",
+        "pid": "0x1104",
+        "device_version": "1.0.0"
+    },
     "width": 3,
     "height": 3,
     "layouts": {

@@ -1,25 +1,27 @@
+# マイクロコントローラの定義
 MCU = RP2040
-SUPPORTS_USB = yes
 
-BOOTLOADER = tinyuf2
+# 使用するソースファイルの追加
+SRC += keyboard.c
 
-BOOTMAGIC_ENABLE = yes
+# キーボードのオプション
+BOOTMAGIC_ENABLE = no
 MOUSEKEY_ENABLE = no
 EXTRAKEY_ENABLE = yes
 CONSOLE_ENABLE = no
 COMMAND_ENABLE = no
 SLEEP_LED_ENABLE = no
 NKRO_ENABLE = yes
-WAIT_FOR_USB = no
 BACKLIGHT_ENABLE = no
 RGBLIGHT_ENABLE = no
 MIDI_ENABLE = no
+BLUETOOTH_ENABLE = no
 AUDIO_ENABLE = no
-FAUXCLICKY_ENABLE = no
-HD44780_ENABLE = no
 
+# 動的キーマップとVIAのサポート
 DYNAMIC_KEYMAP_ENABLE = yes
 VIA_ENABLE = yes
 
-CFLAGS += -Wno-array-bounds
-LINKER_FLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET).map
+# RP2040に関連する設定（これが必要な場合のみ）
+BOOTLOADER = rp2040
+BOARD = GENERIC_RP_RP2040

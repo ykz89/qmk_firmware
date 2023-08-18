@@ -1,12 +1,7 @@
-// Copyright 2023 Hideki Nakamura (@hide-key)
-// SPDX-License-Identifier: GPL-2.0-or-later
-
-#pragma once
-
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "config_common.h"
+// #include "config_common.h"
 
 #define MATRIX_ROWS 3
 #define MATRIX_COLS 3
@@ -23,5 +18,14 @@
 #define DEBOUNCE 5
 
 #define DYNAMIC_KEYMAP_LAYER_COUNT 1
+
+// ホールエフェクトセンサのピン設定
+#define HALL_SENSOR_PIN_W GP6
+#define HALL_SENSOR_PIN_A GP29
+#define HALL_SENSOR_PIN_S GP7
+#define HALL_SENSOR_PIN_D GP1
+#define HALL_SENSOR_PIN_SPC GP0
+
+#define EEPROM_HALL_EFFECT_THRESHOLD_ADDR 0
 
 #endif
