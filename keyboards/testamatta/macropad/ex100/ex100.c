@@ -1,10 +1,18 @@
+// ハードウェアライブラリのアサーションを無効にする
+#ifdef PARAM_ASSERTIONS_ENABLED
+#undef PARAM_ASSERTIONS_ENABLED
+#endif
+#define PARAM_ASSERTIONS_ENABLED(x) 0
+
+#include "keyboard.h"
 #include "quantum.h"
 #include "eeprom.h"
 
 // RP2040のadc関数を利用するためのインクルード
-#include "hardware/structs/adc.h"
+#include "lib/pico-sdk/src/rp2_common/hardware_adc/include/hardware/adc.h"
+#include "hardware/gpio.h"
+#include "lib/pico-sdk/src/common/pico_time/include/pico/time.h"
 
-// HALLセンサのピン定義
 #define HALL_SENSOR_PIN_W GP26
 #define HALL_SENSOR_PIN_A GP27
 #define HALL_SENSOR_PIN_S GP28
@@ -78,7 +86,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     return true;
 }
 
-int main() {
+int main(void) {
     matrix_init_user();
 
     while (1) {

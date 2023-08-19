@@ -3,6 +3,9 @@
     "manufacturer": "testamatta Design Garage",
     "maintainer": "hide-key",
     "url": "https://github.com/hide-key",
+	"processor": "RP2040",
+    "bootloader": "rp2040",
+	"board": "GENERIC_RP_RP2040",
     "usb": {
         "vid": "0x1D8C",
         "pid": "0x1104",
