@@ -19,16 +19,17 @@ VIA_ENABLE = yes
 LTO_ENABLE = yes
 
 # Specify the directories
-QUANTUM_DIR=./quantum
 PICO_SDK_PATH=./lib/pico-sdk/
 
-# Specify the required source files from the Pico SDK
-SRC += $(QUANTUM_DIR)/keyboards/testamatta/macropad/ex100/ex100.c
-SRC += $(PICO_SDK_PATH)src/rp2_common/hardware/adc.c
+# Specify the required source files from the Pico SDK and the keyboard
+SRC += ./keyboards/testamatta/macropad/ex100/ex100.c
+SRC += $(PICO_SDK_PATH)src/rp2_common/hardware_adc/adc.c
 SRC += $(PICO_SDK_PATH)src/common/pico_time/time.c
 
 # Include paths
-INCLUDE_PATHS += -I$(PICO_SDK_PATH)src/common/pico_base/include/
-INCLUDE_PATHS += -I$(PICO_SDK_PATH)src/common/pico_time/include/
-INCLUDE_PATHS += -I$(PICO_SDK_PATH)src/common/pico_util/include/
-INCLUDE_PATHS += -I$(PICO_SDK_PATH)src/common/pico_sync/include/
+CFLAGS += -I./lib/pico-sdk/include
+CFLAGS += -I$(PICO_SDK_PATH)src/common/pico_base/include/
+CFLAGS += -I$(PICO_SDK_PATH)src/common/pico_time/include/
+CFLAGS += -I$(PICO_SDK_PATH)src/common/pico_util/include/
+CFLAGS += -I$(PICO_SDK_PATH)src/common/pico_sync/include/
+CFLAGS += -I$(PICO_SDK_PATH)src/rp2_common/hardware_adc/include/

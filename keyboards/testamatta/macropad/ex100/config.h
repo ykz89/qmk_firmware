@@ -1,15 +1,13 @@
 // ハードウェアライブラリのアサーションを無効にする
 /* #ifdef PARAM_ASSERTIONS_ENABLED
 #undef PARAM_ASSERTIONS_ENABLED
-#endif
-#define PARAM_ASSERTIONS_ENABLED(x) 0 */
+#endif */
 
 #ifndef CONFIG_H
 #define CONFIG_H
 
 // #include "config_common.h"
 
-// disable_assertions.c
 #undef PARAM_ASSERTIONS_ENABLED_LOCK_CORE
 #undef PARAM_ASSERTIONS_ENABLED_TIME
 #undef PARAM_ASSERTIONS_ENABLED_PHEAP
