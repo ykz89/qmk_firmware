@@ -29,6 +29,7 @@ def c2json(cli):
 
         # Error checking
         if not cli.args.filename.exists():
+            cli.log.error(cli.args.filename)
             cli.log.error('C file does not exist!')
             cli.print_usage()
             return False

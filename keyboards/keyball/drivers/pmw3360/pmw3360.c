@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 #include "pmw3360.h"
 
-#define F_CPU 133000000
+//#define F_CPU 133000000
 #define PMW3360_SPI_MODE 3
 #define PMW3360_SPI_DIVISOR (F_CPU / PMW3360_CLOCKS)
 #define PMW3360_CLOCKS 2000000

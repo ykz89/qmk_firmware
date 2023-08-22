@@ -9,3 +9,6 @@ This layout supports RGB matrix. However, due to space constraints on the MCU, o
 ## Layout
 
 ![Keymap layout (generated with keyboard-layout-editor.com)](https://i.imgur.com/XX7SilP.png)
+
+
+`qmk c2json -kb bastardkb/skeletyl/v2/rp2040 -km ykz89 /Users/yingkunzhan/Documents/Repositories/private/qmk_firmware/keyboards/bastardkb/skeletyl/keymaps/ykz89/keymap.c -o skeletyl.json`
