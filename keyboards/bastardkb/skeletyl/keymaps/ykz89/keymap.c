@@ -21,7 +21,7 @@ enum skeletyl_keymap_layers {
     LOWER,
     RAISE,
     EXTEND,
-    FUNCTION,
+    ADJUST,
 };
 
 enum custom_keycodes {
@@ -32,11 +32,18 @@ enum custom_keycodes {
 #define FUN_TAB LT(FUNCTION, KC_TAB)
 #define _L_PTR(KC) LT(LAYER_POINTER, KC)
 
+const uint16_t PROGMEM q_w[] = {KC_Q, KC_W, COMBO_END};
+const uint16_t PROGMEM d_v[] = {KC_C, KC_V, COMBO_END};
+combo_t key_combos[] = {
+    COMBO(q_w, KC_ESC),
+    COMBO(d_v, KC_CCCV), // keycodes with modifiers are possible too!
+};
+
 // clang-format off
-#define LAYOUT_BASE                                                                             \
-       KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,     KC_Y, KC_QUOT,  \
-       KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,     KC_I, KC_O,     \
-       KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_COMM,  KC_DOT, KC_SLSH,\
+#define LAYOUT_BASE                                                                              \
+       KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,    KC_J,    KC_L,    KC_U,     KC_Y,   KC_QUOT, \
+       KC_A,    KC_R,    KC_S,    KC_T,    KC_G,    KC_M,    KC_N,    KC_E,     KC_I,      KC_O, \
+       KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,    KC_K,    KC_H,    KC_COMM,  KC_DOT, KC_SLSH, \
                 MO(LOWER),  SFT_SPC, FUN_TAB LT,    KC_ENT,  KC_BSPC,  MO(RAISE)
 
 /** Convenience row shorthands. */
@@ -65,30 +72,11 @@ enum custom_keycodes {
                       _______, _______, _______, _______, _______, _______
 
 /** \brief Mouse emulation and pointer functions. */
-#define LAYOUT_FUNCTION                                                                       \
+#define LAYOUT_ADJUST                                                                       \
     _______________DEAD_HALF_ROW_______________, _______________DEAD_HALF_ROW_______________, \
-    ______________HOME_ROW_GACS_L______________, ______________HOME_ROW_GACS_R______________, \
+    ____________OSM_HOME_ROW_GACS_L____________, ____________OSM_HOME_ROW_GACS_R____________, \
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, \
                       KC_BTN2, KC_BTN1, KC_BTN3, KC_BTN3, KC_BTN1, KC_BTN2
-
-#define LAYOUT_LAYER_NUMERAL                                                                  \
-    KC_LBRC,    KC_7,    KC_8,    KC_9, KC_RBRC, _______________DEAD_HALF_ROW_______________, \
-    KC_SCLN,    KC_4,    KC_5,    KC_6,  KC_EQL, ______________HOME_ROW_GACS_R______________, \
-     KC_GRV,    KC_1,    KC_2,    KC_3, KC_BSLS, _______________DEAD_HALF_ROW_______________, \
-                       KC_DOT,    KC_0, KC_MINS, XXXXXXX, _______, _______
-
-/**
- * \brief Symbols layer.
- *
- * Secondary left-hand layer has shifted symbols in the same locations to reduce
- * chording when using mods with shifted symbols. `KC_LPRN` is duplicated next to
- * `KC_RPRN`.
- */
-#define LAYOUT_LAYER_SYMBOLS                                                                  \
-    KC_LCBR, KC_AMPR, KC_ASTR, KC_LPRN, KC_RCBR, _______________DEAD_HALF_ROW_______________, \
-    KC_COLN,  KC_DLR, KC_PERC, KC_CIRC, KC_PLUS, ______________HOME_ROW_GACS_R______________, \
-    KC_TILD, KC_EXLM,   KC_AT, KC_HASH, KC_PIPE, _______________DEAD_HALF_ROW_______________, \
-                      KC_LPRN, KC_RPRN, KC_UNDS, _______, XXXXXXX, _______
 
 #define LAYOUT_wrapper(...) LAYOUT_split_3x5_3(__VA_ARGS__)
 
@@ -97,12 +85,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [RAISE] = LAYOUT_wrapper(LAYOUT_RAISE),
   [LOWER] = LAYOUT_wrapper(LAYOUT_LOWER),
   [EXTEND] = LAYOUT_wrapper(LAYOUT_EXTEND),
-  [FUNCTION] = LAYOUT_wrapper(LAYOUT_FUNCTION),
+  [ADJUST] = LAYOUT_wrapper(LAYOUT_ADJUST),
 };
 // clang-format on
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     return update_tri_layer_state(state, LOWER, RAISE, EXTEND);
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_CCCV:  // One key copy/paste
+            if (record->event.pressed) {
+                copy_paste_timer = timer_read();
+            } else {
+                if (timer_elapsed(copy_paste_timer) > TAPPING_TERM) {  // Hold, copy
+                    tap_code16(LCTL(KC_C));
+                } else { // Tap, paste
+                    tap_code16(LCTL(KC_V));
+                }
+            }
+            break;
+    }
+    return true;
 }
 
 #ifdef RGB_MATRIX_ENABLE
