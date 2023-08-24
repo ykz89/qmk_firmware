@@ -25,3 +25,6 @@
 	path = lib/lvgl
 	url = https://github.com/qmk/lvgl.git
 	branch = release/v8.2
+[submodule "lib/tinyusb"]
+	path = lib/tinyusb
+	url = https://github.com/hathach/tinyusb.git
