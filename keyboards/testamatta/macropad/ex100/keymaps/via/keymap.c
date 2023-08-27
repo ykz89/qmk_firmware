@@ -1,8 +1,8 @@
 #include QMK_KEYBOARD_H
 
 // NOTE_B0の再定義問題を回避
-#undef NOTE_B0
-#include "quantum/audio/musical_notes.h"
+// #undef NOTE_B0
+// #include "quantum/audio/musical_notes.h"
 
 /* ,-----------------------.
  * | KC_ESC | KC_W  | KC_F1|

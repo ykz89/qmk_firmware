@@ -1,4 +1,4 @@
-#include "ex100.h"
+#include "ex100_test.h"
 
 #define EEPROM_HALL_EFFECT_THRESHOLD_ADDR 0x00
 

@@ -3,15 +3,14 @@
     "manufacturer": "testamatta Design Garage",
     "maintainer": "hide-key",
     "url": "https://github.com/hide-key",
-	"processor": "RP2040",
+    "processor": "RP2040",
     "bootloader": "rp2040",
-	"board": "GENERIC_RP_RP2040",
+    "board": "GENERIC_RP_RP2040",
     "usb": {
         "vid": "0x1D8C",
         "pid": "0x1104",
         "device_version": "1.0.0"
     },
-
     "features": {
         "mousekey": true
     },
@@ -19,8 +18,6 @@
         "debounce_type":"sym_eager_pk",
         "firmware_format": "uf2"
     },
-    "debounce":5,
-
     "width": 3,
     "height": 3,
     "layouts": {
