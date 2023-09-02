@@ -20,6 +20,13 @@
 
 #include "quantum.h"
 
+enum dilemma_keymap_layers {
+    LAYER_BASE = 0,
+    LAYER_LOWER,
+    LAYER_RAISE,
+    LAYER_POINTER,
+};
+
 /**
  * LEDs index.
  *
@@ -83,8 +90,8 @@ led_config_t g_led_config = { {
     /* index=3  */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     /* index=6  */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     /* index=9  */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
-    /* index=12 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
-    /* index=15 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
+    /* index=12 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_INDICATOR, LED_FLAG_INDICATOR,
+    /* index=15 */ LED_FLAG_INDICATOR, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     // Left split per-key.
     /* index=18 */ LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, // col 1
     /* index=21 */ LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, // col 2
@@ -98,8 +105,8 @@ led_config_t g_led_config = { {
     /* index=39 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     /* index=42 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     /* index=45 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
-    /* index=48 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
-    /* index=51 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
+    /* index=48 */ LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_INDICATOR, LED_FLAG_INDICATOR,
+    /* index=51 */ LED_FLAG_INDICATOR, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW, LED_FLAG_UNDERGLOW,
     // Right split per-key.
     /* index=54 */ LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, // col 10
     /* index=57 */ LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, // col 9
@@ -109,6 +116,46 @@ led_config_t g_led_config = { {
     /* index=66 */ LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT, LED_FLAG_KEYLIGHT,
     /* index=69 */ LED_FLAG_MODIFIER, LED_FLAG_MODIFIER, LED_FLAG_MODIFIER, LED_FLAG_MODIFIER, // Thumb cluster
 } };
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    if (host_keyboard_led_state().caps_lock) {
+        for (int i = 10; i <= 84; i++) {
+            if (g_led_config.flags[i] & LED_FLAG_MODIFIER) {
+                rgb_matrix_set_color(i, RGB_RED);
+            }
+        }
+    }
+
+    if ( get_highest_layer(layer_state) > LAYER_BASE) {
+        HSV hsv = {0, 255, 255};
+
+        switch (get_highest_layer(layer_state)) {
+            case LAYER_LOWER:
+                hsv.h = 32;
+                break;
+            case LAYER_RAISE:
+                hsv.h = 116;
+                break;
+            case LAYER_POINTER:
+                hsv.h = 200;
+                break;
+            default:
+                break;
+        };
+
+        if (hsv.v > rgb_matrix_get_val()) {
+            hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+        }
+        RGB rgb = hsv_to_rgb(hsv);
+
+        for (int i = 10; i <= 84; i++) {
+            if ( g_led_config.flags[i] & LED_FLAG_INDICATOR) {
+                rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
+            }
+        };
+    }
+    return false;
+};
 #endif
 // clang-format on
 
