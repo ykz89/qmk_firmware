@@ -15,7 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "color.h"
+#include "qp.h"
+#include "thintel15.qff.h"
 #include QMK_KEYBOARD_H
+
+static painter_device_t display;
+static painter_font_handle_t  thintel;
 
 enum dilemma_keymap_layers {
     LAYER_BASE = 0,
@@ -182,4 +188,12 @@ void shutdown_user(void) {
     rgb_matrix_sethsv_noeeprom(HSV_RED);
     rgb_matrix_update_pwm_buffers();
 #endif // RGB_MATRIX_ENABLE
+}
+
+void keyboard_post_init_kb(void) {
+    display = qp_gc9a01_make_spi_device(240, 240, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 4, 0);         // Create the display
+    qp_init(display, QP_ROTATION_0);   // Initialise the display
+    qp_clear(display);
+    thintel       = qp_load_font_mem(font_thintel15);
+    qp_drawtext(display, 50, 50, thintel, PSTR("test"));
 }
