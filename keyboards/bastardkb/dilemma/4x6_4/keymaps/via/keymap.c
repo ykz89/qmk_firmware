@@ -15,7 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "color.h"
+#include "qp.h"
+#include "generated/totoro.qgf.h"
 #include QMK_KEYBOARD_H
+
+static painter_device_t display;
+static painter_image_handle_t my_image;
+static deferred_token my_anim;
 
 enum dilemma_keymap_layers {
     LAYER_BASE = 0,
@@ -124,31 +131,36 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     uint8_t layer = get_highest_layer(layer_state);
     if (layer > LAYER_BASE) {
-        RGB rgb;
+        HSV hsv = rgb_matrix_get_hsv();
         switch (get_highest_layer(layer_state)) {
             case LAYER_LOWER:
-                rgb = (RGB){RGB_BLUE};
+                hsv = (HSV){HSV_BLUE};
                 break;
             case LAYER_RAISE:
-                rgb = (RGB){RGB_CORAL};
+                hsv = (HSV){HSV_CORAL};
                 break;
             case LAYER_POINTER:
-                rgb = (RGB){RGB_GREEN};
+                hsv = (HSV){HSV_GREEN};
                 break;
             case 4:
-                rgb = (RGB){RGB_YELLOW};
+                hsv = (HSV){HSV_YELLOW};
                 break;
             case 5:
-                rgb = (RGB){RGB_PINK};
+                hsv = (HSV){HSV_PINK};
                 break;
             case 6:
-                rgb = (RGB){RGB_MAGENTA};
+                hsv = (HSV){HSV_MAGENTA};
                 break;
             case 7:
             default:
-                rgb = (RGB){RGB_RED};
+                hsv = (HSV){HSV_RED};
                 break;
         };
+
+        if (hsv.v > rgb_matrix_get_val()) {
+            hsv.v = RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+        }
+        RGB rgb = hsv_to_rgb(hsv);
 
         for (int i = led_min; i <= led_max; i++) {
             if ( g_led_config.flags[i] & LED_FLAG_UNDERGLOW) {
@@ -182,4 +194,13 @@ void shutdown_user(void) {
     rgb_matrix_sethsv_noeeprom(HSV_RED);
     rgb_matrix_update_pwm_buffers();
 #endif // RGB_MATRIX_ENABLE
+}
+
+void keyboard_post_init_kb(void) {
+    display = qp_gc9a01_make_spi_device(240, 240, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 4, 0);         // Create the display
+    qp_init(display, QP_ROTATION_0);   // Initialise the display
+    qp_clear(display);
+    my_image = qp_load_image_mem(gfx_totoro);
+//    qp_drawimage(display, 0, 0, my_image);
+    my_anim = qp_animate(display, 0, 0, my_image);
 }
