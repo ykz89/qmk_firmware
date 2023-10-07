@@ -7,6 +7,7 @@ For more information see [QMK docs](https://docs.qmk.fm/#/quantum_painter?id=qua
     ```
 1. ### Convert image
     ```qmk painter-convert-graphics -f pal16 -i <filename> -d -o ./generated/```
+    In this case I used a file "totoro.gif".
 
 1. ### Include converted image in `rules.mk`
    `SRC += generated/totoro.qgf.c`
