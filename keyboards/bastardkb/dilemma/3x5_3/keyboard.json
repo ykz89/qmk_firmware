@@ -48,7 +48,7 @@
     },
     "rgb_matrix": {
         "driver": "ws2812",
-        "split_count": [36, 36],
+        "split_count": [35, 35],
         "max_brightness": 176,
         "animations": {
             "alphas_mods": true,
@@ -111,7 +111,6 @@
 
             {"x": 15, "y": 45, "flags": 2},
             {"x": 30, "y": 45, "flags": 2},
-            {"x": 35, "y": 60, "flags": 2},
             {"x": 55, "y": 62, "flags": 2},
 
             {"x": 72, "y": 64, "flags": 2},
@@ -156,7 +155,6 @@
 
             {"x": 209, "y": 45, "flags": 2},
             {"x": 194, "y": 45, "flags": 2},
-            {"x": 189, "y": 60, "flags": 2},
             {"x": 169, "y": 62, "flags": 2},
 
             {"x": 152, "y": 64, "flags": 2},
