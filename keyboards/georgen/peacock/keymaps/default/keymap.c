@@ -11,7 +11,6 @@ enum peacock_keycodes {
     DPI_DEC
 };
 
-// Track button state for digitizer interface
 static uint8_t digitizer_button_state = 0;
 
 const uint16_t PROGMEM etch_a_sketch_combo[] = { KC_LGUI, KC_ENTER, COMBO_END };
@@ -84,14 +83,37 @@ bool shutdown_kb(bool jump_to_bootloader) {
 #ifdef MACOS_TRACKPAD_MODE
 #include "pointing_device.h"
 #include "timer.h"
-// Override pointing_device_task_kb to send digitizer reports for macOS
-// This ensures digitizer reports are sent even when digitizer_send_mouse_reports is true
+#include "digitizer_mouse_fallback.h"
+
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
-    // Call default behavior first
     mouse_report = pointing_device_task_user(mouse_report);
     
-    // Also send digitizer report so macOS can use Digitizer interface
+#if defined(DIGITIZER_ENABLE) && defined(DIGITIZER_FINGER_COUNT) && defined(DIGITIZER_CONTACT_COUNT)
+    static uint32_t scan_time = 0;
+    static int last_contacts = 0;
+    static uint32_t inactivity_timer = 0;
+    static bool scan_time_initialized = false;
+    
+    bool has_mouse_movement = (mouse_report.x != 0 || mouse_report.y != 0);
+    
     digitizer_t digitizer_state = digitizer_get_state();
+    bool has_buttons = (digitizer_state.button1 || digitizer_state.button2 || digitizer_state.button3);
+    
+    bool has_contacts = false;
+    const int max_contacts = (DIGITIZER_FINGER_COUNT < DIGITIZER_CONTACT_COUNT) ? DIGITIZER_FINGER_COUNT : DIGITIZER_CONTACT_COUNT;
+    for (int i = 0; i < max_contacts && i < DIGITIZER_CONTACT_COUNT; i++) {
+        if (digitizer_state.contacts[i].type == FINGER && digitizer_state.contacts[i].tip) {
+            has_contacts = true;
+            break;
+        }
+    }
+    
+    if (!has_contacts && !has_buttons && !has_mouse_movement) {
+        inactivity_timer = timer_read32();
+        last_contacts = 0;
+        return mouse_report;
+    }
+    
     report_digitizer_t digitizer_report = {
         .report_id = REPORT_ID_DIGITIZER,
         .scan_time = 0,
@@ -102,75 +124,67 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         .reserved2 = 0
     };
     
-    // Track scan_time for digitizer reports
-    static uint32_t scan_time = 0;
-    static int last_contacts = 0;
-    static uint32_t inactivity_timer = 0;
     int contacts = 0;
     
-    // Count active contacts and build finger reports
-    for (int i = 0; i < DIGITIZER_FINGER_COUNT && i < DIGITIZER_CONTACT_COUNT; i++) {
-        if (digitizer_state.contacts[i].type == FINGER) {
-            bool finger_active = digitizer_state.contacts[i].tip;
-            if (finger_active) {
+    if (has_contacts) {
+        for (int i = 0; i < max_contacts && i < DIGITIZER_CONTACT_COUNT; i++) {
+            if (digitizer_state.contacts[i].type == FINGER && digitizer_state.contacts[i].tip) {
                 contacts++;
-            }
-            
-            // Include all fingers (active and lifted) in report
-            digitizer_report.fingers[digitizer_report.contact_count] = (digitizer_finger_report_t){
-                .confidence = digitizer_state.contacts[i].confidence,
-                .tip = finger_active ? 1 : 0,
-                .reserved = 0,
-                .contact_id = i,
-                .reserved2 = 0,
-                .x = digitizer_state.contacts[i].x,
-                .y = digitizer_state.contacts[i].y
-            };
-            if (finger_active) {
-                digitizer_report.contact_count++;
+                
+                if (digitizer_report.contact_count < DIGITIZER_FINGER_COUNT) {
+                    digitizer_report.fingers[digitizer_report.contact_count] = (digitizer_finger_report_t){
+                        .confidence = digitizer_state.contacts[i].confidence,
+                        .tip = 1,
+                        .reserved = 0,
+                        .contact_id = i,
+                        .reserved2 = 0,
+                        .x = digitizer_state.contacts[i].x,
+                        .y = digitizer_state.contacts[i].y
+                    };
+                    digitizer_report.contact_count++;
+                }
             }
         }
     }
     
-    // Reset scan_time after inactivity
-    if (last_contacts == 0 && contacts > 0 && timer_elapsed32(inactivity_timer) > 1000) {
+    if (!scan_time_initialized && contacts > 0) {
+        scan_time = timer_read32();
+        scan_time_initialized = true;
+    } else if (last_contacts == 0 && contacts > 0 && timer_elapsed32(inactivity_timer) > DIGITIZER_INACTIVITY_TIMEOUT_MS) {
         scan_time = timer_read32();
     }
     inactivity_timer = timer_read32();
     last_contacts = contacts;
     
-    // Microsoft requires scan_time in 100us ticks
-    if (scan_time > 0) {
+    if (scan_time_initialized) {
         uint32_t scan = timer_elapsed32(scan_time);
-        digitizer_report.scan_time = scan * 10;
+        digitizer_report.scan_time = scan * DIGITIZER_SCAN_TIME_MULTIPLIER;
     }
     
-    // Send digitizer report whenever there's any activity
-    if (digitizer_report.contact_count > 0 || digitizer_report.button1 || 
-        digitizer_report.button2 || digitizer_report.button3 ||
-        mouse_report.x != 0 || mouse_report.y != 0) {
-        host_digitizer_send(&digitizer_report);
-    }
+    host_digitizer_send(&digitizer_report);
+#endif
     
     return mouse_report;
 }
 #endif
 
-// Override pointing_device_keycode_handler to also update digitizer buttons
-// This ensures buttons work on macOS which uses the Digitizer interface
 void pointing_device_keycode_handler(uint16_t keycode, bool pressed) {
     if (IS_MOUSEKEY_BUTTON(keycode)) {
         uint8_t button_idx = keycode - QK_MOUSE_BUTTON_1;
+        
+        if (button_idx > 2) {
+            return;
+        }
+        
         uint8_t button_mask = 1 << button_idx;
         
-        // Update digitizer button state
         if (pressed) {
             digitizer_button_state |= button_mask;
         } else {
             digitizer_button_state &= ~button_mask;
         }
         
-        // Send digitizer report immediately for macOS compatibility
+#if defined(DIGITIZER_ENABLE)
         report_digitizer_t digitizer_report = {
             .report_id = REPORT_ID_DIGITIZER,
             .fingers = {},
@@ -182,8 +196,8 @@ void pointing_device_keycode_handler(uint16_t keycode, bool pressed) {
             .reserved2 = 0
         };
         host_digitizer_send(&digitizer_report);
+#endif
         
-        // Update mouse report (default behavior for Linux/other systems)
         report_mouse_t mouse_report = pointing_device_get_report();
         mouse_report.buttons = pointing_device_handle_buttons(mouse_report.buttons, pressed, button_idx);
         pointing_device_set_report(mouse_report);
@@ -227,9 +241,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
-// Override digitizer_task_kb to include button state from physical buttons
 bool digitizer_task_kb(digitizer_t *digitizer_state) {
-    // Update digitizer buttons from physical button state
+    if (digitizer_state == NULL) {
+        return false;
+    }
+    
     digitizer_state->button1 = (digitizer_button_state & 0x01) ? 1 : 0;
     digitizer_state->button2 = (digitizer_button_state & 0x02) ? 1 : 0;
     digitizer_state->button3 = (digitizer_button_state & 0x04) ? 1 : 0;
