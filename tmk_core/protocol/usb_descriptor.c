@@ -223,7 +223,6 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 #    ifndef MOUSE_SHARED_EP
 };
 #    endif
-
 #endif
 
 #ifdef JOYSTICK_ENABLE
@@ -1489,6 +1488,7 @@ uint16_t get_usb_descriptor(const uint16_t wValue, const uint16_t wIndex, const 
                 case MOUSE_INTERFACE:
                     Address = &MouseReport;
                     Size    = sizeof(MouseReport);
+
                     break;
 #endif
 
