@@ -33,11 +33,18 @@ The default keymap includes `MACOS_TRACKPAD_MODE` which enables native macOS tra
 #define MACOS_TRACKPAD_MODE  // Enable macOS trackpad mode
 ```
 
-**How it works:** The implementation overrides `pointing_device_task_kb()` to send digitizer reports via the Digitizer HID interface. macOS uses this interface for native trackpad features, while other OS fallback to the Mouse interface. Both interfaces receive reports simultaneously, ensuring compatibility across operating systems.
+**How it works:** The implementation uses three function overrides to enable macOS trackpad support:
+
+1. **`pointing_device_task_kb()`** - Sends digitizer reports via the Digitizer HID interface whenever there's pointing activity. macOS uses this interface for native trackpad features (gestures, scrolling, etc.), while other OSes fallback to the Mouse interface. Both interfaces receive reports simultaneously, ensuring compatibility across operating systems.
+
+2. **`pointing_device_keycode_handler()`** - Handles physical button presses and immediately sends digitizer reports with button state changes for responsive macOS button support.
+
+3. **`digitizer_task_kb()`** - Synchronizes physical button state into the digitizer state structure so button presses are reflected in digitizer reports.
 
 **Known limitations:**
 * Requires `DIGITIZER_ENABLE` (already enabled in base config)
 * Button state is tracked separately for digitizer reports to ensure macOS compatibility
+* Limited to 3 buttons (digitizer interface supports up to 3 buttons)
 
 ## Bootloader
 

@@ -23,4 +23,5 @@
 #define I2C1_CLOCK_SPEED 1000000
 
 // Enable macOS trackpad mode for native trackpad support
+// This can be overridden in keymap-specific config.h files if needed
 #define MACOS_TRACKPAD_MODE

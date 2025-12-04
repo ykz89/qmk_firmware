@@ -83,7 +83,6 @@ bool shutdown_kb(bool jump_to_bootloader) {
 #ifdef MACOS_TRACKPAD_MODE
 #include "pointing_device.h"
 #include "timer.h"
-#include "digitizer_mouse_fallback.h"
 
 report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     mouse_report = pointing_device_task_user(mouse_report);
@@ -92,7 +91,6 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     static uint32_t scan_time = 0;
     static int last_contacts = 0;
     static uint32_t inactivity_timer = 0;
-    static bool scan_time_initialized = false;
     
     bool has_mouse_movement = (mouse_report.x != 0 || mouse_report.y != 0);
     
@@ -111,16 +109,25 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
     if (!has_contacts && !has_buttons && !has_mouse_movement) {
         inactivity_timer = timer_read32();
         last_contacts = 0;
+        scan_time = 0; // Reset scan_time on inactivity so it's recalculated when activity resumes
         return mouse_report;
     }
     
+    // Digitizer report with button state from physical keys mapped to mouse buttons
+    // macOS uses the Digitizer interface for trackpad pointing, so it expects button presses
+    // to come from the same interface. We send buttons to BOTH interfaces:
+    // - Mouse interface: For Linux/other OSes that use the Mouse interface
+    // - Digitizer interface: For macOS which uses the Digitizer interface
+    // Note: Only keys mapped to QK_MOUSE_BUTTON_1/2/3 are sent as digitizer buttons.
+    // Other keys (KC_MUTE, DPI_INC, etc.) are sent through the keyboard HID interface.
+    // Finger tap gestures are handled separately by the core digitizer gesture system.
     report_digitizer_t digitizer_report = {
         .report_id = REPORT_ID_DIGITIZER,
         .scan_time = 0,
         .contact_count = 0,
-        .button1 = digitizer_state.button1,
-        .button2 = digitizer_state.button2,
-        .button3 = digitizer_state.button3,
+        .button1 = digitizer_state.button1, // Key mapped to QK_MOUSE_BUTTON_1 (left click)
+        .button2 = digitizer_state.button2, // Key mapped to QK_MOUSE_BUTTON_2 (right click)
+        .button3 = digitizer_state.button3, // Key mapped to QK_MOUSE_BUTTON_3 (middle click)
         .reserved2 = 0
     };
     
@@ -147,16 +154,17 @@ report_mouse_t pointing_device_task_kb(report_mouse_t mouse_report) {
         }
     }
     
-    if (!scan_time_initialized && contacts > 0) {
+    // Initialize or reset scan_time when contacts first appear after inactivity
+    if (scan_time == 0 && contacts > 0) {
         scan_time = timer_read32();
-        scan_time_initialized = true;
     } else if (last_contacts == 0 && contacts > 0 && timer_elapsed32(inactivity_timer) > DIGITIZER_INACTIVITY_TIMEOUT_MS) {
         scan_time = timer_read32();
     }
     inactivity_timer = timer_read32();
     last_contacts = contacts;
     
-    if (scan_time_initialized) {
+    // Calculate scan_time in 100us ticks (Microsoft PTP requirement)
+    if (scan_time != 0) {
         uint32_t scan = timer_elapsed32(scan_time);
         digitizer_report.scan_time = scan * DIGITIZER_SCAN_TIME_MULTIPLIER;
     }
@@ -172,6 +180,7 @@ void pointing_device_keycode_handler(uint16_t keycode, bool pressed) {
     if (IS_MOUSEKEY_BUTTON(keycode)) {
         uint8_t button_idx = keycode - QK_MOUSE_BUTTON_1;
         
+        // Limit to buttons 1-3 (digitizer supports up to 3 buttons)
         if (button_idx > 2) {
             return;
         }
@@ -184,6 +193,9 @@ void pointing_device_keycode_handler(uint16_t keycode, bool pressed) {
             digitizer_button_state &= ~button_mask;
         }
         
+        // Send buttons to both interfaces for cross-platform compatibility:
+        // - Digitizer interface: macOS expects buttons from the same interface it uses for pointing
+        // - Mouse interface: Linux/other OSes use the Mouse interface for both pointing and buttons
 #if defined(DIGITIZER_ENABLE)
         report_digitizer_t digitizer_report = {
             .report_id = REPORT_ID_DIGITIZER,
@@ -242,10 +254,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 }
 
 bool digitizer_task_kb(digitizer_t *digitizer_state) {
-    if (digitizer_state == NULL) {
-        return false;
-    }
-    
+    // Update digitizer button state from physical button state tracked in keycode handler
     digitizer_state->button1 = (digitizer_button_state & 0x01) ? 1 : 0;
     digitizer_state->button2 = (digitizer_button_state & 0x02) ? 1 : 0;
     digitizer_state->button3 = (digitizer_button_state & 0x04) ? 1 : 0;
